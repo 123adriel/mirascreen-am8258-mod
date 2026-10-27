@@ -1,279 +1,224 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>MiraScreen AM8258 - Panel de Control & Red</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mirascreen BFDA3480 - Conectar</title>
+  <style>
+    :root {
+      --bg: #0b0f19;
+      --card: rgba(25, 33, 50, 0.65);
+      --border: rgba(255, 255, 255, 0.14);
+      --accent: #7dd3fc;
+      --glow: rgba(56, 189, 248, 0.35);
+      --green: #4ade80;
+      --text: #f8fafc;
+      --muted: #94a3b8;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    }
+
+    body {
+      background: radial-gradient(circle at 20% 20%, #172554 0%, var(--bg) 60%);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 2.5rem;
+      width: 100%;
+      max-width: 920px;
+      position: relative;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1.5px solid var(--border);
+      backdrop-filter: blur(18px);
+      border-radius: 24px;
+      padding: 2.8rem 2.2rem;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      min-height: 360px;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5), 0 0 35px rgba(56, 189, 248, 0.08);
+      position: relative;
+    }
+
+    .step-badge {
+      align-self: flex-start;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      color: #cbd5e1;
+      font-size: 0.9rem;
+      font-weight: 600;
+      padding: 0.4rem 1rem;
+      border-radius: 10px;
+    }
+
+    .keys-wrapper {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 1.2rem;
+      margin: 2rem 0;
+    }
+
+    .key {
+      background: linear-gradient(180deg, rgba(255,255,255,0.14) 0%, rgba(255,255,255,0.05) 100%);
+      border: 1.5px solid rgba(125, 211, 252, 0.45);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.4), 0 0 20px var(--glow);
+      border-radius: 16px;
+      min-width: 96px;
+      height: 84px;
+      padding: 0 1.5rem;
+      font-size: 2rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+    }
+
+    .plus {
+      font-size: 2.2rem;
+      color: #cbd5e1;
+      font-weight: 500;
+    }
+
+    .action-label {
+      font-size: 1.45rem;
+      font-weight: 500;
+      color: #f1f5f9;
+      margin-top: 0.5rem;
+    }
+
+    .cast-icon {
+      color: #cbd5e1;
+      margin-top: 0.5rem;
+    }
+
+    .device-name {
+      font-size: 2.5rem;
+      font-weight: 800;
+      line-height: 1.15;
+      color: #e0f2fe;
+      text-shadow: 0 0 24px rgba(56, 189, 248, 0.55);
+      margin: 1rem 0;
+      word-break: break-word;
+    }
+
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.65rem;
+      background: rgba(34, 197, 94, 0.14);
+      border: 1.5px solid rgba(74, 222, 128, 0.5);
+      box-shadow: 0 0 20px rgba(34, 197, 94, 0.25);
+      color: #86efac;
+      padding: 0.55rem 1.35rem;
+      border-radius: 999px;
+      font-size: 1.05rem;
+      font-weight: 500;
+    }
+
+    .dot {
+      width: 12px;
+      height: 12px;
+      background: var(--green);
+      border-radius: 50%;
+      box-shadow: 0 0 10px var(--green);
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.4; }
+    }
+
+    footer {
+      margin-top: 2.2rem;
+      color: var(--muted);
+      font-size: 0.9rem;
+      display: flex;
+      gap: 1.5rem;
+      align-items: center;
+    }
+
+    .net-badge {
+      color: var(--accent);
+      font-weight: 600;
+    }
+  </style>
 </head>
 <body>
-  <div class="background-glow glow-1"></div>
-  <div class="background-glow glow-2"></div>
 
-  <div class="container">
-    <!-- Header -->
-    <header class="header">
-      <div class="brand">
-        <div class="badge-icon">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
-            <line x1="8" y1="21" x2="16" y2="21"></line>
-            <line x1="12" y1="17" x2="12" y2="21"></line>
+  <main class="grid">
+    <!-- PASO 1 -->
+    <section class="card">
+      <span class="step-badge">Paso 1</span>
+      <div class="keys-wrapper">
+        <div class="key" aria-label="Tecla Windows">
+          <svg width="36" height="36" viewBox="0 0 24 24" fill="#e0f2fe">
+            <path d="M3 5.5L10.5 4.5V11.5H3V5.5ZM3 18.5L10.5 19.5V12.5H3V18.5ZM11.5 4.35L21 3V11.5H11.5V4.35ZM11.5 19.65L21 21V12.5H11.5V19.65Z"/>
           </svg>
         </div>
-        <div>
-          <h1>MiraScreen AM8258</h1>
-          <p class="subtitle">Custom Firmware &middot; Mod USB RJ45 &middot; Root Console</p>
-        </div>
+        <span class="plus">+</span>
+        <div class="key">K</div>
       </div>
-      <div class="status-pill active" id="sys-status">
-        <span class="dot"></span> Dispositivo En Línea
-      </div>
-    </header>
-
-    <!-- Quick Stats Bar -->
-    <div class="stats-grid">
-      <div class="stat-card">
-        <div class="stat-icon rj45-icon">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <rect x="4" y="4" width="16" height="16" rx="2"></rect>
-            <rect x="9" y="9" width="6" height="6"></rect>
-            <line x1="9" y1="1" x2="9" y2="4"></line>
-            <line x1="15" y1="1" x2="15" y2="4"></line>
-          </svg>
-        </div>
-        <div>
-          <span class="stat-label">Conexión RJ45 (USB)</span>
-          <span class="stat-value" id="eth-status">Conectado (DHCP)</span>
-          <span class="stat-sub" id="eth-ip">IP: 192.168.1.150</span>
-        </div>
-      </div>
-
-      <div class="stat-card">
-        <div class="stat-icon wifi-icon">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M5 12.55a11 11 0 0 1 14.08 0"></path>
-            <path d="M1.42 9a16 16 0 0 1 21.16 0"></path>
-            <path d="M8.53 16.11a6 6 0 0 1 6.95 0"></path>
-            <line x1="12" y1="20" x2="12.01" y2="20"></line>
-          </svg>
-        </div>
-        <div>
-          <span class="stat-label">Punto de Acceso Wi-Fi</span>
-          <span class="stat-value" id="wifi-ssid">Mirascreen BFDA3480</span>
-          <span class="stat-sub" id="wifi-ip">IP: 192.168.49.1 (Canal 11)</span>
-        </div>
-      </div>
-
-      <div class="stat-card">
-        <div class="stat-icon root-icon">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <polyline points="4 17 10 11 4 5"></polyline>
-            <line x1="12" y1="19" x2="20" y2="19"></line>
-          </svg>
-        </div>
-        <div>
-          <span class="stat-label">Acceso Root (Telnet / UART)</span>
-          <span class="stat-value text-accent">Habilitado</span>
-          <span class="stat-sub">Puerto: 23 &middot; ttyS0 @ 115200</span>
-        </div>
-      </div>
-    </div>
-
-    <!-- Navigation Tabs -->
-    <nav class="tabs">
-      <button class="tab-btn active" data-tab="tab-network" id="btn-tab-network">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
-        Configuración de Red & RJ45
-      </button>
-      <button class="tab-btn" data-tab="tab-display" id="btn-tab-display">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
-        Video & Pantalla
-      </button>
-      <button class="tab-btn" data-tab="tab-system" id="btn-tab-system">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
-        Sistema & Root Shell
-      </button>
-    </nav>
-
-    <!-- TAB 1: RED & RJ45 -->
-    <section class="tab-content active" id="tab-network">
-      <div class="panel-grid">
-        <!-- Panel RJ45 Ethernet -->
-        <div class="panel">
-          <div class="panel-header">
-            <h3>Adaptador Ethernet USB-RJ45</h3>
-            <span class="tag tag-accent">Direct Connection</span>
-          </div>
-          <p class="panel-desc">Gestiona el módulo <code>cdc_ether</code> para conexión cableada de alta estabilidad sin latencia de Wi-Fi.</p>
-          
-          <form id="form-rj45" onsubmit="event.preventDefault(); saveEthernetConfig();">
-            <div class="form-group">
-              <label>Modo de Asignación IP</label>
-              <select id="rj45-mode" class="input-select" onchange="toggleIpInputs()">
-                <option value="dhcp" selected>DHCP Automático (Recomendado)</option>
-                <option value="static">IP Estática Manual</option>
-              </select>
-            </div>
-
-            <div id="static-ip-fields" class="hidden">
-              <div class="form-group">
-                <label>Dirección IP Fija</label>
-                <input type="text" id="rj45-ip" class="input-text" placeholder="192.168.1.150" value="192.168.1.150">
-              </div>
-              <div class="form-group">
-                <label>Máscara de Subred</label>
-                <input type="text" id="rj45-netmask" class="input-text" placeholder="255.255.255.0" value="255.255.255.0">
-              </div>
-              <div class="form-group">
-                <label>Puerta de Enlace (Gateway)</label>
-                <input type="text" id="rj45-gateway" class="input-text" placeholder="192.168.1.1" value="192.168.1.1">
-              </div>
-            </div>
-
-            <div class="action-row">
-              <button type="submit" class="btn btn-primary" id="btn-save-eth">Aplicar Configuración Cableada</button>
-              <button type="button" class="btn btn-secondary" onclick="restartEthernetService()">Reiniciar eth0</button>
-            </div>
-          </form>
-        </div>
-
-        <!-- Panel Wi-Fi SoftAP -->
-        <div class="panel">
-          <div class="panel-header">
-            <h3>Punto de Acceso Wi-Fi Local</h3>
-            <span class="tag">SoftAP</span>
-          </div>
-          <p class="panel-desc">Ajusta el nombre de red y contraseña del dongle cuando funciona de forma autónoma.</p>
-          
-          <form id="form-wifi" onsubmit="event.preventDefault(); saveWifiConfig();">
-            <div class="form-group">
-              <label>Nombre de Red (SSID)</label>
-              <input type="text" id="ap-ssid" class="input-text" value="Mirascreen BFDA3480">
-            </div>
-            <div class="form-group">
-              <label>Contraseña WPA2-PSK</label>
-              <input type="text" id="ap-pass" class="input-text" value="67661126">
-            </div>
-            <div class="form-group">
-              <label>Canal Wi-Fi (2.4 GHz)</label>
-              <select id="ap-channel" class="input-select">
-                <option value="1">Canal 1 (2412 MHz)</option>
-                <option value="6">Canal 6 (2437 MHz)</option>
-                <option value="11" selected>Canal 11 (2462 MHz)</option>
-              </select>
-            </div>
-
-            <div class="action-row">
-              <button type="submit" class="btn btn-primary" id="btn-save-wifi">Actualizar Wi-Fi</button>
-            </div>
-          </form>
-        </div>
-      </div>
+      <div class="action-label">Presiona Windows + K</div>
     </section>
 
-    <!-- TAB 2: PANTALLA & RESOLUCION -->
-    <section class="tab-content" id="tab-display">
-      <div class="panel">
-        <div class="panel-header">
-          <h3>Resolución de Salida HDMI</h3>
-          <span class="tag">Display Control</span>
-        </div>
-        <p class="panel-desc">Selecciona la resolución nativa para tu monitor o capturadora USB.</p>
-
-        <div class="resolutions-grid">
-          <label class="res-card active">
-            <input type="radio" name="res" value="1920x1080_60P" checked>
-            <div class="res-body">
-              <span class="res-title">1080p @ 60Hz</span>
-              <span class="res-desc">Full HD &middot; Máxima fluidez</span>
-            </div>
-          </label>
-          <label class="res-card">
-            <input type="radio" name="res" value="1920x1080_30P">
-            <div class="res-body">
-              <span class="res-title">1080p @ 30Hz</span>
-              <span class="res-desc">Full HD &middot; Modo compatibilidad</span>
-            </div>
-          </label>
-          <label class="res-card">
-            <input type="radio" name="res" value="1280x720_60P">
-            <div class="res-body">
-              <span class="res-title">720p @ 60Hz</span>
-              <span class="res-desc">HD estándar</span>
-            </div>
-          </label>
-        </div>
-
-        <div class="action-row mt-4">
-          <button class="btn btn-primary" onclick="applyResolution()">Guardar Resolución HDMI</button>
-        </div>
+    <!-- PASO 2 -->
+    <section class="card">
+      <span class="step-badge">Paso 2</span>
+      <div class="cast-icon">
+        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M2 16.1A5 5 0 0 1 5.9 20M2 12.05A9 9 0 0 1 9.95 20M2 8V6a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-6"/>
+          <line x1="2" y1="20" x2="2.01" y2="20"/>
+        </svg>
+      </div>
+      <div class="device-name" id="device-ssid">Mirascreen<br>BFDA3480</div>
+      <div class="status-pill">
+        <span class="dot"></span>
+        <span id="status-text">Listo para conectar</span>
       </div>
     </section>
+  </main>
 
-    <!-- TAB 3: SISTEMA & ROOT -->
-    <section class="tab-content" id="tab-system">
-      <div class="panel-grid">
-        <div class="panel">
-          <div class="panel-header">
-            <h3>Terminal Root & Diagnóstico</h3>
-            <span class="tag tag-accent">Telnet / UART</span>
-          </div>
-          <p class="panel-desc">Comandos directos para acceder al sistema operativo embebido.</p>
+  <footer>
+    <span>Enlace activo: <strong class="net-badge" id="net-mode">Wi-Fi / RJ45</strong></span>
+    <span>IP: <strong class="net-badge" id="net-ip">192.168.49.1</strong></span>
+  </footer>
 
-          <div class="code-box">
-            <div class="code-header">
-              <span>Conexión por Red (Telnet)</span>
-              <button class="btn-copy" onclick="copyCode('telnet 192.168.49.1')">Copiar</button>
-            </div>
-            <code>telnet 192.168.49.1</code>
-          </div>
-
-          <div class="code-box mt-3">
-            <div class="code-header">
-              <span>Conexión por Ethernet Cableada (USB RJ45)</span>
-              <button class="btn-copy" onclick="copyCode('telnet 192.168.1.150')">Copiar</button>
-            </div>
-            <code>telnet 192.168.1.150</code>
-          </div>
-
-          <div class="code-box mt-3">
-            <div class="code-header">
-              <span>Conexión Serie UART (Pines TX/RX)</span>
-              <button class="btn-copy" onclick="copyCode('minicom -D /dev/ttyUSB0 -b 115200')">Copiar</button>
-            </div>
-            <code>Baudrate: 115200 8N1 &middot; Dispositivo: ttyS0 (3.3V)</code>
-          </div>
-        </div>
-
-        <div class="panel">
-          <div class="panel-header">
-            <h3>Acciones del Sistema</h3>
-            <span class="tag tag-warning">Control</span>
-          </div>
-          <p class="panel-desc">Operaciones de reinicio y restablecimiento.</p>
-
-          <div class="btn-vertical-group">
-            <button class="btn btn-secondary btn-full" onclick="rebootDevice()">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
-              Reiniciar Dongle Miracast
-            </button>
-            <button class="btn btn-danger btn-full" onclick="factoryReset()">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
-              Restablecer Valores de Fábrica
-            </button>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Toast Notification -->
-    <div id="toast" class="toast">Ajustes guardados correctamente</div>
-  </div>
-
-  <script src="app.js"></script>
+  <script>
+    // Consulta ligera del estado del adaptador USB-RJ45 si existe /net_status.json
+    async function pollNetwork() {
+      try {
+        const res = await fetch('net_status.json?t=' + Date.now());
+        if (!res.ok) return;
+        const data = await res.json();
+        document.getElementById('net-ip').textContent = data.ip || '192.168.49.1';
+        document.getElementById('net-mode').textContent =
+          data.mode === 'ETH' ? 'Ethernet RJ45 (eth0)' : 'Wi-Fi SoftAP';
+      } catch (e) {}
+    }
+    pollNetwork();
+    setInterval(pollNetwork, 5000);
+  </script>
 </body>
 </html>

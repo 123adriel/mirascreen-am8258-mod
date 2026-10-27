@@ -1,55 +1,46 @@
 #!/bin/sh
-# ==============================================================================
-# Script de inicio para Adaptador USB-RJ45 (Ethernet) en Actions Micro AM8258
-# ==============================================================================
+# Inicialización de Hardware USB OTG + Adaptador RJ45 (CDC Ethernet)
+# Plataforma: Actions Micro AM8258 - Linux 2.6.27.29
 
-MOD_DIR=/lib/modules/2.6.27.29
+MOD_DIR="/lib/modules/2.6.27.29"
+STATUS_FILE="/tmp/net_status.json"
 
-echo "[USB-ETH] Cargando controladores USB Host y Ethernet..."
+# 1. Cargar pila USB OTG, Host Controller y driver CDC Ethernet
+insmod "$MOD_DIR/am7x_uoc.ko" 2>/dev/null
+sleep 1
+insmod "$MOD_DIR/am7x_hcd.ko" 2>/dev/null
+sleep 1
+insmod "$MOD_DIR/cdc_ether.ko" 2>/dev/null
 
-# 1. Cargar controlador USB OTG y Host Controller
-if [ -f "$MOD_DIR/am7x_uoc.ko" ]; then
-    insmod $MOD_DIR/am7x_uoc.ko
-fi
+# Opcional: Si probás adaptadores basados en ASIX (AX88772) o Realtek (RTL8152)
+# y tenés los módulos compilados en el árbol, se intentan cargar:
+[ -f "$MOD_DIR/asix.ko" ] && insmod "$MOD_DIR/asix.ko" 2>/dev/null
+[ -f "$MOD_DIR/usbnet.ko" ] && insmod "$MOD_DIR/usbnet.ko" 2>/dev/null
 
-if [ -f "$MOD_DIR/am7x_hcd.ko" ]; then
-    insmod $MOD_DIR/am7x_hcd.ko
-fi
+# 2. Levantar acceso root por Telnet inmediatamente
+telnetd -l /bin/sh &
 
-# 2. Cargar drivers de red USB
-if [ -f "$MOD_DIR/cdc_ether.ko" ]; then
-    insmod $MOD_DIR/cdc_ether.ko
-fi
+# 3. Bucle de vigilancia en segundo plano para detectar eth0 y actualizar la UI
+(
+  while true; do
+    if grep -q "eth0:" /proc/net/dev; then
+      ifconfig eth0 up 2>/dev/null
+      ETH_IP=$(ifconfig eth0 | awk '/inet addr/{print substr($2,6)}')
+      
+      if [ -z "$ETH_IP" ]; then
+        # Solicitar IP por DHCP si aún no tiene una asignada
+        udhcpc -i eth0 -n -q -t 3 2>/dev/null
+        ETH_IP=$(ifconfig eth0 | awk '/inet addr/{print substr($2,6)}')
+      fi
 
-if [ -f "$MOD_DIR/cdc_subset.ko" ]; then
-    insmod $MOD_DIR/cdc_subset.ko
-fi
-
-# Pequeña espera para enumeración USB
-sleep 2
-
-# 3. Detectar si apareció una interfaz Ethernet (eth0 o usb0)
-ETH_IF=""
-if ifconfig -a | grep -q "eth0"; then
-    ETH_IF="eth0"
-elif ifconfig -a | grep -q "usb0"; then
-    ETH_IF="usb0"
-fi
-
-if [ -n "$ETH_IF" ]; then
-    echo "[USB-ETH] Interfaz detectada: $ETH_IF. Levantando DHCP..."
-    ifconfig $ETH_IF up
-    
-    # Iniciar cliente DHCP en background
-    if [ -x /sbin/udhcpc ]; then
-        udhcpc -i $ETH_IF -b -s /usr/share/udhcpc/default.script &
+      if [ -n "$ETH_IP" ]; then
+        echo "{\"mode\":\"ETH\",\"ip\":\"$ETH_IP\",\"iface\":\"eth0\"}" > "$STATUS_FILE"
+      else
+        echo "{\"mode\":\"WAIT_DHCP\",\"ip\":\"192.168.49.1\",\"iface\":\"eth0\"}" > "$STATUS_FILE"
+      fi
+    else
+      echo "{\"mode\":\"SOFTAP\",\"ip\":\"192.168.49.1\",\"iface\":\"wlan0\"}" > "$STATUS_FILE"
     fi
-else
-    echo "[USB-ETH] No se detecto interfaz cableada, manteniendo Wi-Fi activo."
-fi
-
-# 4. Asegurar Telnet activo para acceso root
-if [ -x /usr/sbin/telnetd ]; then
-    echo "[SECURITY] Iniciando Telnet daemon..."
-    telnetd -l /bin/sh &
-fi
+    sleep 5
+  done
+) &
