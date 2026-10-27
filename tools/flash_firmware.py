@@ -38,7 +38,7 @@ def flash(bin_file):
         proc = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
         print(proc.stdout)
         if "VERIFIED" in proc.stdout or "done" in proc.stdout or proc.returncode == 0:
-            print("[✓] ¡Flasheo completado y verificado con éxito!")
+            print("[OK] Flasheo completado y verificado con exito!")
             return True
         else:
             print("[-] Ocurrió un error durante el flasheo.")
